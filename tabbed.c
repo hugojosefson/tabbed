@@ -264,6 +264,13 @@ configurenotify(const XEvent *e)
 
 		if (sel > -1)
 			resize(sel, ww, wh - bh);
+
+        int i;
+        for (i = 0; i < nclients; i++) {
+            if (i != sel)
+                XMoveWindow(dpy, clients[i]->win, 0, wh);
+        }
+
 		XSync(dpy, False);
 	}
 }
@@ -277,7 +284,7 @@ configurerequest(const XEvent *e)
 
 	if ((c = getclient(ev->window)) > -1) {
 		wc.x = 0;
-		wc.y = bh;
+		wc.y = topbar ? bh : 0;
 		wc.width = ww;
 		wc.height = wh - bh;
 		wc.border_width = 0;
@@ -329,7 +336,7 @@ drawbar(void)
 		dc.w = ww;
 		XFetchName(dpy, win, &name);
 		drawtext(name ? name : "", dc.norm);
-		XCopyArea(dpy, dc.drawable, win, dc.gc, 0, 0, ww, bh, 0, 0);
+		XCopyArea(dpy, dc.drawable, win, dc.gc, 0, 0, ww, bh, 0, topbar ? 0 : wh - bh);
 		XSync(dpy, False);
 
 		return;
@@ -368,7 +375,7 @@ drawbar(void)
 		dc.x += dc.w;
 		clients[c]->tabx = dc.x;
 	}
-	XCopyArea(dpy, dc.drawable, win, dc.gc, 0, 0, ww, bh, 0, 0);
+	XCopyArea(dpy, dc.drawable, win, dc.gc, 0, 0, ww, bh, 0, topbar ? 0 : wh - bh);
 	XSync(dpy, False);
 }
 
@@ -462,6 +469,7 @@ focus(int c)
 
 	resize(c, ww, wh - bh);
 	XRaiseWindow(dpy, clients[c]->win);
+    XMoveWindow(dpy, clients[c]->win, 0, topbar ? bh : 0);
 	XSetInputFocus(dpy, clients[c]->win, RevertToParent, CurrentTime);
 	sendxembed(c, XEMBED_FOCUS_IN, XEMBED_FOCUS_CURRENT, 0, 0);
 	sendxembed(c, XEMBED_WINDOW_ACTIVATE, 0, 0, 0);
@@ -689,7 +697,7 @@ manage(Window w)
 		XEvent e;
 
 		XWithdrawWindow(dpy, w, 0);
-		XReparentWindow(dpy, w, win, 0, bh);
+		XReparentWindow(dpy, w, win, 0, topbar ? bh : 0);
 		XSelectInput(dpy, w, PropertyChangeMask |
 		             StructureNotifyMask | EnterWindowMask);
 		XSync(dpy, False);
@@ -833,7 +841,7 @@ resize(int c, int w, int h)
 	XWindowChanges wc;
 
 	ce.x = 0;
-	ce.y = wc.y = bh;
+	ce.y = wc.y = topbar ? bh : 0;
 	ce.width = wc.width = w;
 	ce.height = wc.height = h;
 	ce.type = ConfigureNotify;
