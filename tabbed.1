@@ -110,39 +110,17 @@ defines the urgent foreground color.
 prints version information to stderr, then exits.
 .SH USAGE
 .TP
-.B Ctrl\-Shift\-Return
+.B Ctrl\-Shift\-t
 open new tab
 .TP
-.B Ctrl\-Shift\-h
+.B Ctrl\-,
 previous tab
 .TP
-.B Ctrl\-Shift\-l
+.B Ctrl\-.
 next tab
-.TP
-.B Ctrl\-Shift\-j
-move selected tab one to the left
-.TP
-.B Ctrl\-Shift\-k
-move selected tab one to the right
-.TP
-.B Ctrl\-Shift\-u
-toggle autofocus of urgent tabs
-.TP
-.B Ctrl\-Tab
-toggle between the selected and last selected tab
-.TP
-.B Ctrl\-`
-open dmenu to either create a new tab appending the entered string or select
-an already existing tab.
 .TP
 .B Ctrl\-q
 close tab
-.TP
-.B Ctrl\-u
-focus next urgent tab
-.TP
-.B Ctrl\-[0..9]
-jumps to nth tab
 .TP
 .B F11
 Toggle fullscreen mode.
@@ -156,6 +134,8 @@ $ tabbed xterm -into
 $ $(tabbed -d >/tmp/tabbed.xid); urxvt -embed $(</tmp/tabbed.xid);
 .TP
 $ tabbed -r 2 st -w '' -e tmux
+.TP
+$ tabbed -f alacritty --embed
 .SH CUSTOMIZATION
 .B tabbed
 can be customized by creating a custom config.h and (re)compiling the source
