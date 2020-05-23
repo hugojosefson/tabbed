@@ -2,3 +2,5 @@
 *.o
 /tabbed
 /xembed
+/.idea/
+*.iml
