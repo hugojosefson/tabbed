@@ -32,8 +32,5 @@ static Key keys[] = {
 	{ MODKEY,               XK_comma,  rotate,      { .i = -1 } },
 	{ MODKEY,               XK_period, rotate,      { .i = +1 } },
 
-
-	{ MODKEY,               XK_q,      killclient,  { 0 } },
-
 	{ 0,                    XK_F11,    fullscreen,  { 0 } },
 };
