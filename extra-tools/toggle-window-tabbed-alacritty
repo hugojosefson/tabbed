@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+toggle-window \
+  tabbed-alacritty \
+  "tabbed -d -n tabbed-alacritty -c alacritty --embed" \
+  "windowsize 3% 3% windowmove $(. <( xdotool getmouselocation --shell ); echo "${X} ${Y}") key F11"

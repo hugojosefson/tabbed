@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -e
+
+function is_already_running() {
+  local current_script_name="${0}"
+  local my_pid="$$"
+  pgrep --full --list-full "^bash ${current_script_name}( .*)?$" \
+  | egrep '^[0-9]+ bash\b' \
+  | egrep -v "^${my_pid}\b" \
+  | awk '{print $1}' \
+  | tr -d ' \n\r\t' \
+  | grep -q "^"
+}
+
+function toggle_window() {
+  local target_classname="${1}"
+  local target_command="${2}"
+  local show_extra_args="${3}"
+
+  local active_window="$(xdotool getactivewindow)"
+  local target_window="$(xdotool search --classname "${target_classname}")"
+
+  if [[ -z "${target_window}" ]]; then
+    echo not yet running >&2
+    # not yet running
+    local target_window="$(${target_command})"
+    sleep .2
+    echo xdotool search --classname "${target_classname}" windowmap ${show_extra_args} windowactivate >&2
+         xdotool search --classname "${target_classname}" windowmap ${show_extra_args} windowactivate
+    sleep 1
+    return
+  fi
+
+  if [[ "${active_window}" == "${target_window}" ]]; then
+    echo hide >&2
+    # hide
+    xdotool search --classname "${target_classname}" windowunmap
+    xdotool windowunmap "${target_window}"
+  else
+    echo show, give focus >&2
+    # show, give focus
+    echo xdotool search --classname "${target_classname}" windowunmap windowmap ${show_extra_args} windowactivate >&2
+         xdotool search --classname "${target_classname}" windowunmap windowmap ${show_extra_args} windowactivate
+  fi
+}
+
+if is_already_running; then
+  echo "Aborting due to concurrent trigger." >&2
+  exit 0
+fi
+
+toggle_window "${@}"
